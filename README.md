@@ -1,3 +1,4 @@
+
 # Live Traffic Map
 It's an interactive map that provides real-time traffic updates to help users navigate efficiently. Using TomTom Traffic API and Leaflet.js, this map displays current road conditions, congestion levels, and alternative routes for better travel planning.
 
@@ -22,9 +23,9 @@ It's an interactive map that provides real-time traffic updates to help users na
     You can get yours here:
     https://docs.mapbox.com/api/overview/
 
--Write your OpenCage API key
+- Write your OpenCage API key
 
-![](https://i.postimg.cc/KYT3mz4B/Screenshot-from-2025-01-30-17-13-47.png)
+![](https://i.postimg.cc/Dz73wpw6/Screenshot-from-2025-01-30-17-59-01.png)
 
     You can get yours here:
     https://opencagedata.com/api
