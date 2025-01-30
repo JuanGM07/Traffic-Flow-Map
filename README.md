@@ -1,6 +1,3 @@
-# Traffic-Flow-Map
-
-
 # Live Traffic Map
 It's an interactive map that provides real-time traffic updates to help users navigate efficiently. Using TomTom Traffic API and Leaflet.js, this map displays current road conditions, congestion levels, and alternative routes for better travel planning.
 
