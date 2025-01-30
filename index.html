@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live Traffic Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css">
+    <!-- Leaflet CSS (Required for Leaflet) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet Fullscreen Plugin CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.css" />
+
+    <!-- Leaflet JS (Required for Leaflet) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet Fullscreen Plugin JS -->
+    <script src="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.js"></script>  
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+    .container {
+      text-align: center;
+      width: 80%;
+      max-width: 800px;
+      background-color: white;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+    .map {
+      width: 100%;
+      height: 60vh;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+    .search-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .search-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Live Traffic Map</h1>
+    <input type="text" id="city-search" placeholder="Write a city...">
+    <button id="search-btn" class="search-btn">Update map</button>
+
+
+    <div id="map" class="map"></div>
+  </div>
+  <link rel="stylesheet" href="Control.FullScreen.css" />
+  <script src="Control.FullScreen.js"></script>
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Leaflet Fullscreen Plugin JS -->
+    <script src="https://unpkg.com/leaflet.fullscreen@3.0.2/Control.FullScreen.js"></script>
+  <script>
+    // Inicializar el mapa
+    const map = L.map('map', {
+      fullscreenControl: true, // Activa el control de pantalla completa
+      fullscreenControlOptions: {
+        position: 'topleft' // Puedes cambiar la posición del botón si lo deseas
+      }
+    }).setView([51.505, -0.09], 13); // Centrado inicialmente en Londres
+
+    // Capa de Mapbox
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      maxZoom: 18,
+      id: 'mapbox/streets-v11',
+      accessToken: 'MAPBOX_API_KEY' // Reemplaza con tu clave de Mapbox
+    }).addTo(map);
+
+      // Event listeners for Fullscreen mode
+    map.on("enterFullscreen", function () {
+            console.log("Map entered fullscreen mode");
+        });
+
+    map.on("exitFullscreen", function () {
+            console.log("Map exited fullscreen mode");
+        });
+
+    // Capa de tráfico de TomTom
+    const tomtomLayer = L.tileLayer('https://api.tomtom.com/traffic/map/4/tile/flow/relative/{z}/{x}/{y}.png?key={accessToken}&thickness={thickness}', {
+      maxZoom: 22,
+      style: 'relative',
+      thickness: 5,
+      accessToken: 'TOMTOM_API_KEY' // Reemplaza con tu clave de TomTom
+    }).addTo(map);
+
+    // Función para obtener las coordenadas de la ciudad usando Geocoding de OpenCage
+    function getCoordinates(city) {
+      const apiKey = 'OPENCAGE_API_KEY'; // Reemplaza con tu clave de OpenCage Geocoding API
+      const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(city)}&key=${apiKey}`;
+
+      return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.results && data.results.length > 0) {
+            return data.results[0].geometry;
+          } else {
+            throw new Error('City not found');
+          }
+        });
+    }
+
+    // Evento de clic para actualizar el mapa con la ciudad ingresada
+    document.getElementById('search-btn').addEventListener('click', function() {
+      const city = document.getElementById('city-search').value.trim();
+
+      if (city === '') {
+        alert('Please enter a city');
+        return;
+      }
+
+      getCoordinates(city)
+        .then(location => {
+          const { lat, lng } = location;
+          map.setView([lat, lng], 13); // Centrar el mapa en la ciudad
+
+          // Añadir marcador en la ciudad
+          L.marker([lat, lng]).addTo(map)
+            .bindPopup(`<b>${city}</b>`)
+            .openPopup();
+        })
+        .catch(error => {
+          alert(error.message); // Mostrar error si no se encuentra la ciudad
+        });
+    });
+  </script>
+
+</body>
+</html>
