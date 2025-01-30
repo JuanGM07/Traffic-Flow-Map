@@ -44,6 +44,6 @@ Run it in the port of your preference (default:3000)
 ```
 
 ![Live Traffic Map](https://i.postimg.cc/t437cccN/Screenshot-from-2025-01-30-16-58-35.png)
-<img alt="Live Traffic Map " style="width:500px; height:auto;">
+<img src="https://i.postimg.cc/t437cccN/Screenshot-from-2025-01-30-16-58-35.png" style="width:500px; height:auto;">
 
 
